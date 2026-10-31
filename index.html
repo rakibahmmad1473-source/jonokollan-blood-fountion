@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>জনকল্যাণ ব্লাড ফাউন্ডেশন</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f5f6fa;color:#222}
+header{background:#b5122b;color:white;text-align:center;padding:28px 15px}
+header h1{margin:0;font-size:25px}
+header p{margin:9px 0 0}
+nav{display:flex;justify-content:center;flex-wrap:wrap;background:#850c20}
+nav button{background:none;color:white;border:0;padding:13px 15px;cursor:pointer}
+.container{max-width:850px;margin:22px auto;padding:15px}
+.card{background:white;padding:22px;border-radius:14px;margin-bottom:17px;box-shadow:0 3px 12px #0001}
+h2{color:#b5122b;margin-top:0}
+input,select,textarea{width:100%;padding:12px;margin:8px 0 15px;border:1px solid #ddd;border-radius:8px;font-size:15px}
+.action{background:#b5122b;color:white;border:0;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:15px}
+.secondary{background:#333}
+.stat{display:inline-block;background:#fff0f2;padding:15px;margin:5px;border-radius:10px;color:#a00}
+.hidden{display:none}
+.result{border:1px solid #eee;padding:13px;margin:10px 0;border-radius:9px}
+footer{text-align:center;padding:25px;background:#850c20;color:white}
+</style>
+</head>
+<body>
+<header>
+<h1>🩸 জনকল্যাণ ব্লাড ফাউন্ডেশন</h1>
+<p id="tagline">রক্ত দিন, জীবন বাঁচান | মানবতার সেবায় আমরা</p>
+<button class="action secondary" onclick="toggleLanguage()">English / বাংলা</button>
+</header>
+
+<nav>
+<button onclick="show('home')">হোম</button>
+<button onclick="show('register')">রক্তদাতা নিবন্ধন</button>
+<button onclick="show('search')">রক্তদাতা খুঁজুন</button>
+<button onclick="show('request')">জরুরি রক্তের আবেদন</button>
+</nav>
+
+<div class="container">
+<section id="home">
+<div class="card">
+<h2>স্বাগতম!</h2>
+<p>জনকল্যাণ ব্লাড ফাউন্ডেশন একটি মানবিক উদ্যোগ। আমাদের লক্ষ্য জরুরি সময়ে রক্তদাতা ও রক্তের প্রয়োজন এমন মানুষের মধ্যে যোগাযোগ তৈরি করা।</p>
+<div class="stat">🩸 রক্তদাতা: <b id="donorCount">0</b></div>
+<div class="stat">📋 আবেদন: <b id="requestCount">0</b></div>
+</div>
+<div class="card">
+<h2>রক্তদাতা হতে চান?</h2>
+<p>আপনার সামান্য সহযোগিতা বাঁচাতে পারে একটি মূল্যবান জীবন।</p>
+<button class="action" onclick="show('register')">নিবন্ধন করুন</button>
+</div>
+<div class="card">
+<h2>জরুরি যোগাযোগ</h2>
+<p>রক্তের প্রয়োজনে আমাদের সঙ্গে যোগাযোগ করুন।</p>
+</div>
+</section>
+
+<section id="register" class="hidden">
+<div class="card">
+<h2>রক্তদাতা নিবন্ধন ফর্ম</h2>
+<form id="donorForm">
+<label>আপনার নাম</label>
+<input id="name" required placeholder="সম্পূর্ণ নাম">
+<label>মোবাইল নম্বর</label>
+<input id="phone" type="tel" required placeholder="01XXXXXXXXX">
+<label>রক্তের গ্রুপ</label>
+<select id="blood" required>
+<option value="">নির্বাচন করুন</option>
+<option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+<option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+</select>
+<label>জেলা</label>
+<input id="district" required placeholder="আপনার জেলা">
+<label>উপজেলা / এলাকা</label>
+<input id="area" required placeholder="আপনার এলাকা">
+<label>সর্বশেষ রক্তদানের তারিখ</label>
+<input id="last" type="date">
+<label><input type="checkbox" required style="width:auto"> আমার তথ্য যোগাযোগের জন্য ব্যবহারে সম্মতি দিচ্ছি</label>
+<button class="action" type="submit">নিবন্ধন করুন</button>
+</form>
+</div>
+</section>
+
+<section id="search" class="hidden">
+<div class="card">
+<h2>রক্তদাতা খুঁজুন</h2>
+<label>রক্তের গ্রুপ</label>
+<select id="searchBlood">
+<option value="">সকল গ্রুপ</option>
+<option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+<option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+</select>
+<label>জেলা</label>
+<input id="searchDistrict" placeholder="জেলার নাম">
+<button class="action" onclick="searchDonors()">খুঁজুন</button>
+<div id="results"></div>
+</div>
+</section>
+
+<section id="request" class="hidden">
+<div class="card">
+<h2>জরুরি রক্তের আবেদন</h2>
+<form id="requestForm">
+<input id="patient" required placeholder="রোগীর নাম">
+<input id="hospital" required placeholder="হাসপাতালের নাম">
+<select id="requestBlood" required>
+<option value="">রক্তের গ্রুপ</option>
+<option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+<option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+</select>
+<input id="units" type="number" min="1" required placeholder="রক্তের ব্যাগ সংখ্যা">
+<input id="location" required placeholder="হাসপাতালের ঠিকানা">
+<input id="contact" type="tel" required placeholder="যোগাযোগের মোবাইল নম্বর">
+<input id="needed" type="datetime-local" required>
+<textarea id="details" placeholder="অতিরিক্ত তথ্য"></textarea>
+<button class="action" type="submit">আবেদন জমা দিন</button>
+</form>
+</div>
+</section>
+</div>
+
+<footer>
+<p>© 2026 জনকল্যাণ ব্লাড ফাউন্ডেশন</p>
+<p>মানবতার সেবায়, মানুষের পাশে ❤️</p>
+</footer>
+
+<script>
+let donors=JSON.parse(localStorage.getItem('jkDonors')||'[]');
+let requests=JSON.parse(localStorage.getItem('jkRequests')||'[]');
+
+function show(id){
+document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'));
+document.getElementById(id).classList.remove('hidden');
+}
+function updateCounts(){
+document.getElementById('donorCount').textContent=donors.length;
+document.getElementById('requestCount').textContent=requests.length;
+}
+document.getElementById('donorForm').addEventListener('submit',function(e){
+e.preventDefault();
+donors.push({
+name:name.value,phone:phone.value,blood:blood.value,
+district:district.value,area:area.value,last:last.value
+});
+localStorage.setItem('jkDonors',JSON.stringify(donors));
+this.reset();updateCounts();
+alert('নিবন্ধন সফল হয়েছে!');
+show('home');
+});
+function searchDonors(){
+let b=searchBlood.value;
+let d=searchDistrict.value.toLowerCase().trim();
+let found=donors.filter(x=>(!b||x.blood===b)&&(!d||x.district.toLowerCase().includes(d)));
+document.getElementById('results').innerHTML=found.length?
+found.map(x=>`<div class="result"><b>${escapeHTML(x.name)}</b><br>🩸 ${escapeHTML(x.blood)}<br>📍 ${escapeHTML(x.district)}, ${escapeHTML(x.area)}<br>📞 <a href="tel:${encodeURIComponent(x.phone)}">${escapeHTML(x.phone)}</a></div>`).join(''):
+'<p>কোনো রক্তদাতা পাওয়া যায়নি।</p>';
+}
+function escapeHTML(s){
+return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+document.getElementById('requestForm').addEventListener('submit',function(e){
+e.preventDefault();
+requests.push({
+patient:patient.value,hospital:hospital.value,blood:requestBlood.value,
+units:units.value,location:location.value,contact:contact.value,
+needed:needed.value,details:details.value
+});
+localStorage.setItem('jkRequests',JSON.stringify(requests));
+this.reset();updateCounts();
+alert('আপনার আবেদন জমা হয়েছে!');
+show('home');
+});
+let english=false;
+function toggleLanguage(){
+english=!english;
+document.getElementById('tagline').textContent=english?
+"Donate Blood, Save Lives | Serving Humanity":
+"রক্ত দিন, জীবন বাঁচান | মানবতার সেবায় আমরা";
+}
+updateCounts();
+</script>
+</body>
+</html>
